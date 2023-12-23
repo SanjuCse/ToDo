@@ -13,6 +13,7 @@ export class ToDoComponent implements OnInit, OnChanges {
   toDos: ToDo[] = [];
   summary: string = "";
   showToDo: ToDo = new ToDo();
+  selectedToDoIndex: number = 0;
 
   constructor(private toDoService: ToDoService) { }
 
@@ -24,13 +25,19 @@ export class ToDoComponent implements OnInit, OnChanges {
     this.todos();
   }
 
+  save() {
+    this.toDoService
+      .save(this.toDo)
+      .subscribe(response => { this.msg = response; this.todos(); this.toDo = new ToDo(); });
+  }
+
   todos() {
     this.toDoService
       .todos()
       .subscribe(response => {
         this.toDos = response;
         if (this.toDos.length != 0) {
-          this.showToDo = this.toDos[0];
+          this.showToDo = this.toDos[this.selectedToDoIndex];
         }
       });
   }
@@ -43,5 +50,6 @@ export class ToDoComponent implements OnInit, OnChanges {
 
   selectToDo(index: number) {
     this.showToDo = this.toDos[index];
+    this.selectedToDoIndex = index;
   }
 }
